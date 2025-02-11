@@ -160,6 +160,7 @@ with the new directory paths.
 
 ## 📢 Follow My Journey
 For updates and insights on my Arch Linux setup and RAG experiments.
+
 [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/jeffrey__2081/)
 
 ---
