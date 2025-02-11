@@ -56,7 +56,11 @@ curl -fsSL https://ollama.com/install.sh | sh
 After installation, start the OLAMA service:
 
 ```sh
-ollama serve &
+ollama pull solar
+```
+
+```sh
+ollama run solar
 ```
 
 For more details, refer to the official OLAMA repository: [Ollama GitHub](https://github.com/ollama/ollama)
