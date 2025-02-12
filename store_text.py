@@ -1,3 +1,9 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "12"
+os.environ["OPENBLAS_NUM_THREADS"] = "12"
+os.environ["MKL_NUM_THREADS"] = "12"
+os.environ["NUMEXPR_NUM_THREADS"] = "12"
+os.environ["TBB_NUM_THREADS"] = "12"
 import json
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma

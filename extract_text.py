@@ -1,3 +1,9 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "12"
+os.environ["OPENBLAS_NUM_THREADS"] = "12"
+os.environ["MKL_NUM_THREADS"] = "12"
+os.environ["NUMEXPR_NUM_THREADS"] = "12"
+os.environ["TBB_NUM_THREADS"] = "12"
 import sys
 sys.path.append("/home/jeff/.local/lib/python3.13/site-packages")
 import pypdf
