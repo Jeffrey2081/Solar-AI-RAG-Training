@@ -151,7 +151,7 @@ output_file = "/home/jeff/training/extracted_text.json"
 persist_directory="/home/jeff/training/chroma_db"
 ```
 
-with the new directory paths.
+with the new directory paths and where ever there is 'jeff' replace with your home directory 
 
 ## 🔧 Future Improvements
 - ✅ Implement a GUI interface for easier interaction.
