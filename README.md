@@ -40,7 +40,7 @@ sudo pacman -S python python-pip
 Run the following command to install required packages:
 
 ```sh
-pip install pypdf langchain chromadb sentence-transformers ollama
+pip install pypdf langchain-community chromadb sentence-transformers ollama
 ```
 
 ### Install and Run OLAMA

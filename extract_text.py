@@ -11,8 +11,8 @@ import os
 import json
 
 # Paths
-pdf_folder = "/home/jeff/training/pdf/"
-output_file = "/home/jeff/training/extracted_text.json"
+pdf_folder = "/home/jeff/Solar-AI-RAG-Training/pdf/"
+output_file = "/home/jeff/Solar-AI-RAG-Training/extracted_text.json"
 
 def extract_text_from_pdf(pdf_path):
     with open(pdf_path, "rb") as f:

@@ -5,12 +5,12 @@ os.environ["MKL_NUM_THREADS"] = "12"
 os.environ["NUMEXPR_NUM_THREADS"] = "12"
 os.environ["TBB_NUM_THREADS"] = "12"
 import ollama
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 # Load embeddings and vector store
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-vector_db = Chroma(collection_name="textbooks", embedding_function=embedding_model, persist_directory="/home/jeff/training/chroma_db")
+vector_db = Chroma(collection_name="textbooks", embedding_function=embedding_model, persist_directory="/home/jeff/Solar-AI-RAG-Training/chroma_db")
 
 def query_solar(query):
     # Retrieve most relevant textbook content
@@ -19,7 +19,7 @@ def query_solar(query):
 
     # Modify the prompt to restrict knowledge
     prompt = f"""
-    You are a textbook-trained AI. Only use the following information to answer:
+    You are a textbook-trained AI and your name is Jarvis. Only use the following information to answer:
     {context}
 
     Question: {query}
