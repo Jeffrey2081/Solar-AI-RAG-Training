@@ -34,8 +34,8 @@ if [ -f /etc/os-release ]; then
     # Replace the hardcoded value in the Makefile
     sed -i "s/zx/$CPU_THREADS/g" modelfile
     ollama create jeff-ai -f ./modelfile
+    echo "Jeff-AI model created successfully."
 else
     echo "Cannot detect Linux distribution. Please install pip and ollama manually."
-    exit 1
+    exit 
 fi
-echo "Installation completed."
