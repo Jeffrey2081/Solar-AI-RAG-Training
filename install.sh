@@ -20,16 +20,19 @@ install_pip() {
     fi
 }
 
-
 # Detect Linux distribution and install dependencies
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     echo "Detected Linux distribution: $NAME"
     install_pip
+    # Find the number of CPU threads
+    CPU_THREADS=$(nproc)
+    echo "Detected CPU threads: $CPU_THREADS"
+    # Replace the hardcoded value in the Makefile
+    sed -i "s/zx/$CPU_THREADS/g" modelfile
     ollama create jeff-ai -f ./modelfile
- else
+else
     echo "Cannot detect Linux distribution. Please install pip and ollama manually."
     exit 1
 fi
-
 echo "Installation completed."
