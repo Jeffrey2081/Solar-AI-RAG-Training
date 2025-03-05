@@ -6,14 +6,17 @@ install_pip() {
     if command -v apt-get &> /dev/null; then
         sudo apt-get update
         sudo apt-get install -y curl python3 python3-pip
+        curl -fsSL https://ollama.com/install.sh | sh
     elif command -v yum &> /dev/null; then
         sudo yum install -y python3 curl  python3-pip
+        curl -fsSL https://ollama.com/install.sh | sh
     elif command -v dnf &> /dev/null; then
-        sudo dnf install -y python3 curl  python3-pip
+        sudo dnf install -y python3 curl  python3-pip  
+         curl -fsSL https://ollama.com/install.sh | sh
     elif command -v yay &> /dev/null; then
-          yay -Syu python python-pip curl  --noconfirm
+          yay -Syu python ollama python-pip curl  --noconfirm
     elif command -v pacman &> /dev/null; then
-        sudo pacman -Syu curl python python-pip  --noconfirm
+        sudo pacman -Syu curl ollama python python-pip  --noconfirm
     else
         echo "Package manager not supported. Please install pip manually."
         exit 1
@@ -25,7 +28,6 @@ if [ -f /etc/os-release ]; then
     . /etc/os-release
     echo "Detected Linux distribution: $NAME"
     install_pip
-    curl -fsSL https://ollama.com/install.sh | sh
     sudo systemctl enable --now ollama.service
     pip install pypdf langchain-community chromadb sentence-transformers ollama --break-system-packages
     # Find the number of CPU threads
