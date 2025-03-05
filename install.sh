@@ -26,6 +26,7 @@ if [ -f /etc/os-release ]; then
     echo "Detected Linux distribution: $NAME"
     install_pip
     curl -fsSL https://ollama.com/install.sh | sh
+    pip install pypdf langchain-community chromadb sentence-transformers ollama --break-system-packages
     # Find the number of CPU threads
     CPU_THREADS=$(nproc)
     echo "Detected CPU threads: $CPU_THREADS"
