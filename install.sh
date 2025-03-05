@@ -5,15 +5,15 @@ install_pip() {
     echo "Installing pip..."
     if command -v apt-get &> /dev/null; then
         sudo apt-get update
-        sudo apt-get install -y curl python3.13 ollama python3.13-pip
+        sudo apt-get install -y curl python3 python3-pip
     elif command -v yum &> /dev/null; then
-        sudo yum install -y python3.13 curl ollama python3.13-pip
+        sudo yum install -y python3 curl  python3-pip
     elif command -v dnf &> /dev/null; then
-        sudo dnf install -y python3.13 curl ollama python3.13-pip
+        sudo dnf install -y python3 curl  python3-pip
     elif command -v yay &> /dev/null; then
-          yay -S python python-pip curl ollama --noconfirm
+          yay -Syu python python-pip curl  --noconfirm
     elif command -v pacman &> /dev/null; then
-        sudo pacman -Syu curl python python-pip ollama --noconfirm
+        sudo pacman -Syu curl python python-pip  --noconfirm
     else
         echo "Package manager not supported. Please install pip manually."
         exit 1
@@ -25,6 +25,7 @@ if [ -f /etc/os-release ]; then
     . /etc/os-release
     echo "Detected Linux distribution: $NAME"
     install_pip
+    curl -fsSL https://ollama.com/install.sh | sh
     # Find the number of CPU threads
     CPU_THREADS=$(nproc)
     echo "Detected CPU threads: $CPU_THREADS"
