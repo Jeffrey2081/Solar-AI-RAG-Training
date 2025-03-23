@@ -42,7 +42,7 @@ Run the following command to install required packages:
 ```sh
 pip install pypdf langchain-community chromadb sentence-transformers ollama
 ```
-
+Due to occasional issues you might need to use ```sh --break-system-packages ```
 ### Install and Run OLAMA
 
 <details>
