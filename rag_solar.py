@@ -1,46 +1,92 @@
-import argparse
-import ollama
-from langchain_chroma import Chroma
 import os
-from langchain_huggingface import HuggingFaceEmbeddings
+import sys
+import argparse
 
-os.environ["OMP_NUM_THREADS"] = "12"
-os.environ["OPENBLAS_NUM_THREADS"] = "12"
-os.environ["MKL_NUM_THREADS"] = "12"
-os.environ["NUMEXPR_NUM_THREADS"] = "12"
-os.environ["TBB_NUM_THREADS"] = "12"
+# Optimize threading dynamically
+threads = str(os.cpu_count() or 4)
+for env_var in ["OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS", "TBB_NUM_THREADS"]:
+    os.environ[env_var] = threads
 
-# Load embeddings and vector store
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+chroma_dir = os.path.join(BASE_DIR, "chroma_db")
+
+if not os.path.exists(chroma_dir):
+    print(f"Error: Vector database not found at '{chroma_dir}'.")
+    print("Please run 'extract_text.py' and then 'store_text.py' first.")
+    sys.exit(1)
+
+try:
+    import ollama
+except ImportError:
+    print("Error: 'ollama' python package is required. Run: pip install ollama")
+    sys.exit(1)
+
+try:
+    try:
+        from langchain_huggingface import HuggingFaceEmbeddings
+        from langchain_chroma import Chroma
+    except ImportError:
+        from langchain_community.embeddings import HuggingFaceEmbeddings
+        from langchain_community.vectorstores import Chroma
+except ImportError:
+    print("Error: LangChain and Chroma dependencies not found. Run: pip install chromadb langchain-community sentence-transformers")
+    sys.exit(1)
+
+print("Loading vector embeddings...")
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-vector_db = Chroma(collection_name="textbooks", embedding_function=embedding_model, persist_directory="/home/jeff/Solar-AI-RAG-Training/chroma_db")
+vector_db = Chroma(collection_name="textbooks", embedding_function=embedding_model, persist_directory=chroma_dir)
 
-def query_solar(query):
-    # Retrieve most relevant textbook content
+def query_solar(query, model="jeff-ai"):
+    # Retrieve top 3 relevant passages
     docs = vector_db.similarity_search(query, k=3)
-    context = "\n".join([doc.page_content for doc in docs])
+    if not docs:
+        context = "No relevant context found in database."
+    else:
+        context = "\n\n---\n\n".join([doc.page_content for doc in docs])
 
-    # Modify the prompt to restrict knowledge
-    prompt = f"""
-    You are a pdf-trained AI. Your main work is to tell the or guess the disease based on the symptoms and your name is Jarvis . Only use the following information to answer:
-    {context}
+    prompt = f"""You are a specialized AI assistant named Jarvis. Use the following context retrieved from reference documents to answer the question accurately. If the context does not contain sufficient details, state that clearly.
 
-    Question: {query}
-    """
+Context:
+{context}
 
-    # Get response from Solar
-    response = ollama.chat(model="jeff-ai", messages=[{"role": "user", "content": prompt}])
-    return response['message']['content']
+Question: {query}
+Answer:"""
+
+    try:
+        response = ollama.chat(model=model, messages=[{"role": "user", "content": prompt}])
+        return response['message']['content']
+    except Exception as e:
+        return f"Error communicating with Ollama (model '{model}'): {e}\nEnsure Ollama is running ('ollama serve' or 'systemctl start ollama')."
 
 def main():
-    parser = argparse.ArgumentParser(description="Ask a question to the RAG system.")
-    parser.add_argument("question", type=str, help="The question you want to ask.")
+    parser = argparse.ArgumentParser(description="Query the Solar RAG document system.")
+    parser.add_argument("question", nargs="?", type=str, help="Question to ask the AI (omit for interactive mode).")
+    parser.add_argument("--model", type=str, default="jeff-ai", help="Ollama model to query (default: jeff-ai or solar)")
     args = parser.parse_args()
 
-    # Ask the question and print the response
-    response = query_solar(args.question)
-    print(args.question)
-    print(response)
+    if args.question:
+        print(f"\nQuestion: {args.question}")
+        ans = query_solar(args.question, model=args.model)
+        print(f"\nResponse:\n{ans}")
+    else:
+        print("==================================================")
+        print("        Solar RAG Interactive Query Shell         ")
+        print("==================================================")
+        print("Type your question and press Enter. Type 'exit' or 'quit' to end.\n")
+        while True:
+            try:
+                q = input("\nAsk > ").strip()
+                if not q:
+                    continue
+                if q.lower() in ["exit", "quit", "q"]:
+                    print("Goodbye!")
+                    break
+                print("\nThinking...")
+                ans = query_solar(q, model=args.model)
+                print(f"\nJarvis: {ans}")
+            except (KeyboardInterrupt, EOFError):
+                print("\nExiting.")
+                break
 
 if __name__ == "__main__":
     main()
-

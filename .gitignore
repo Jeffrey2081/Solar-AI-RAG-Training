@@ -1,0 +1,5 @@
+chroma_db/
+extracted_text.json
+__pycache__/
+*.pyc
+.env
